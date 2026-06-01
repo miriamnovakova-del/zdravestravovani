@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Journey Map & Service Blueprint – Zdravé Stravování</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap');
+
+  :root {
+    --green-primary: #4a7c59;
+    --green-dark: #2d5a3d;
+    --green-light: #e8f4eb;
+    --green-mid: #6a9e7a;
+    --yellow: #f5c842;
+    --yellow-light: #fef9e7;
+    --yellow-dark: #d4a800;
+    --bg: #f7f8f5;
+    --surface: #ffffff;
+    --border: #e2e8d5;
+    --text-primary: #1a2e20;
+    --text-secondary: #4a5e4f;
+    --text-muted: #7a8f7e;
+    --red: #dc3545;
+    --red-light: #fdf0f2;
+    --orange: #e07b39;
+    --orange-light: #fef3ec;
+    --blue: #3b6fa0;
+    --blue-light: #eef4fb;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  h1,h2,h3 { font-family: 'DM Serif Display', serif; }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--green-dark);
+    color: white;
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(45,90,61,.25);
+  }
+  .header-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .logo-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -.5px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--yellow);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .header-meta {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .meta-chip {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: .75rem;
+    font-weight: 500;
+    color: rgba(255,255,255,.85);
+  }
+  .meta-chip.yellow { background: var(--yellow); color: var(--text-primary); border-color: var(--yellow); }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 65px;
+    z-index: 90;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .nav-tabs-inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-tab:hover { color: var(--green-primary); }
+  .nav-tab.active { color: var(--green-primary); border-bottom-color: var(--green-primary); }
+
+  /* ── SECTIONS ── */
+  .section {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 48px 32px;
+  }
+  .section-header {
+    margin-bottom: 36px;
+  }
+  .section-label {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--green-primary);
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+    line-height: 1.2;
+  }
+  .section-desc {
+    color: var(--text-secondary);
+    font-size: .9rem;
+    max-width: 640px;
+  }
+  .section-divider {
+    border: none;
+    border-top: 2px solid var(--border);
+    margin: 0;
+  }
+
+  /* ── JOURNEY TIMELINE ── */
+  .journey-wrap {
+    overflow-x: auto;
+    padding-bottom: 16px;
+  }
+  .journey-track {
+    display: flex;
+    gap: 0;
+    min-width: max-content;
+    position: relative;
+    padding-top: 8px;
+  }
+  .journey-connector {
+    position: absolute;
+    top: 52px;
+    left: 120px;
+    right: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green-primary), var(--green-mid), var(--yellow-dark));
+    z-index: 0;
+    border-radius: 2px;
+  }
+  .journey-step {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 220px;
+    flex-shrink: 0;
+  }
+  .step-node {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 3px solid var(--green-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 10px rgba(74,124,89,.2);
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    transition: transform .2s;
+  }
+  .step-node:hover { transform: scale(1.1); }
+  .step-node.problem { border-color: var(--red); background: var(--red-light); }
+  .step-node.warning { border-color: var(--orange); background: var(--orange-light); }
+  .step-num {
+    position: absolute;
+    top: -8px; right: -8px;
+    width: 18px; height: 18px;
+    background: var(--green-primary);
+    color: white;
+    border-radius: 50%;
+    font-size: .6rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-num.red { background: var(--red); }
+  .step-num.orange { background: var(--orange); }
+
+  .step-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 14px 12px;
+    width: 200px;
+    margin-top: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    transition: box-shadow .2s, transform .2s;
+    cursor: pointer;
+  }
+  .step-card:hover { box-shadow: 0 6px 20px rgba(74,124,89,.15); transform: translateY(-2px); }
+  .step-card.problem-card { border-color: #f5b8c0; background: var(--red-light); }
+  .step-card.warning-card { border-color: #f5ceab; background: var(--orange-light); }
+
+  .step-card-label {
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .step-card-title {
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .step-card-desc {
+    font-size: .76rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .step-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: .65rem;
+    font-weight: 600;
+    margin: 2px 2px 0 0;
+  }
+  .tag-channel { background: var(--blue-light); color: var(--blue); }
+  .tag-team { background: var(--green-light); color: var(--green-dark); }
+  .tag-problem { background: #fde2e6; color: var(--red); }
+  .tag-warn { background: #fdebd8; color: var(--orange); }
+
+  .emotion-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 0 0;
+    font-size: .72rem;
+    color: var(--text-muted);
+  }
+  .emotion-bar {
+    width: 180px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .emotion-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .4s;
+  }
+
+  /* ── ALERT BANNER ── */
+  .alert-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: .78rem;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+  .alert-banner.red { background: var(--red-light); border: 1.5px solid #f5b8c0; color: #8b1a26; }
+  .alert-banner.orange { background: var(--orange-light); border: 1.5px solid #f5ceab; color: #7a3d10; }
+
+  /* ── EMAIL FLOW ── */
+  .email-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .email-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.04);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .email-card:hover { box-shadow: 0 6px 20px rgba(74,124,89,.12); transform: translateY(-2px); }
+  .email-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--green-primary);
+    color: white;
+    font-size: .75rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+  }
+  .email-subject {
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .email-desc {
+    font-size: .76rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .email-timing {
+    margin-top: 10px;
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--green-primary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ── SERVICE BLUEPRINT ── */
+  .blueprint-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .8rem;
+    min-width: 1100px;
+  }
+  .blueprint-wrap { overflow-x: auto; }
+  .blueprint-table th {
+    background: var(--green-dark);
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  .blueprint-table th:first-child {
+    background: var(--text-primary);
+    width: 140px;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
+  .blueprint-table td {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  .blueprint-table td:first-child {
+    background: var(--green-light);
+    font-weight: 700;
+    font-size: .72rem;
+    color: var(--green-dark);
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    white-space: nowrap;
+  }
+  .bp-row-customer { background: var(--blue-light); }
+  .bp-row-frontstage { background: #f0f7f2; }
+  .bp-row-backstage { background: #fefaf0; }
+  .bp-row-systems { background: #f5f5f5; }
+  .bp-row-channels { background: #f0f4fa; }
+  .bp-row-pain { background: #fdf0f2; }
+  .bp-row-opportunity { background: #f0faf2; }
+
+  .bp-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: .66rem;
+    font-weight: 600;
+    margin: 2px 2px 0 0;
+  }
+  .bp-pill-red { background: #fde2e6; color: var(--red); }
+  .bp-pill-green { background: var(--green-light); color: var(--green-dark); }
+  .bp-pill-blue { background: var(--blue-light); color: var(--blue); }
+  .bp-pill-orange { background: #fdebd8; color: var(--orange); }
+  .bp-pill-yellow { background: var(--yellow-light); color: var(--yellow-dark); }
+
+  .line-divider {
+    border: none;
+    border-top: 2px dashed var(--border);
+    margin: 4px 0 6px;
+  }
+
+  /* ── UX AUDIT ── */
+  .audit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .audit-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  }
+  .audit-card.friction { border-left: 4px solid var(--red); }
+  .audit-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  .audit-title {
+    font-size: .9rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+  }
+  .audit-severity {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: .65rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .sev-high { background: #fde2e6; color: var(--red); }
+  .sev-med { background: #fdebd8; color: var(--orange); }
+  .audit-desc {
+    font-size: .78rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+  }
+
+  /* ── RECOMMENDATIONS ── */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  @media(max-width:768px){ .comparison-grid { grid-template-columns: 1fr; } }
+  .variant-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .variant-card.recommended { border-color: var(--green-primary); }
+  .variant-header {
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: .9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .variant-header.a { background: #fdf0f2; color: var(--red); }
+  .variant-header.b { background: var(--green-light); color: var(--green-dark); }
+  .variant-body { padding: 16px 18px; }
+  .variant-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .8rem;
+  }
+  .variant-row:last-child { border-bottom: none; }
+  .variant-metric { color: var(--text-muted); font-weight: 600; }
+  .variant-value { font-weight: 700; }
+  .val-bad { color: var(--red); }
+  .val-good { color: var(--green-primary); }
+  .val-med { color: var(--orange); }
+
+  .recommend-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-primary);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: .8rem;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* ── RETENTION ── */
+  .retention-phases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media(max-width:900px){ .retention-phases { grid-template-columns: 1fr; } }
+  .phase-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .phase-header {
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: .85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .phase-header.during { background: var(--green-light); color: var(--green-dark); }
+  .phase-header.before { background: var(--yellow-light); color: var(--yellow-dark); }
+  .phase-header.after { background: var(--blue-light); color: var(--blue); }
+  .phase-body { padding: 14px 18px; }
+  .phase-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .8rem;
+  }
+  .phase-item:last-child { border-bottom: none; }
+  .phase-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .dot-green { background: var(--green-primary); }
+  .dot-yellow { background: var(--yellow-dark); }
+  .dot-blue { background: var(--blue); }
+  .phase-item-title { font-weight: 600; color: var(--text-primary); }
+  .phase-item-desc { color: var(--text-secondary); font-size: .73rem; margin-top: 2px; }
+
+  /* ── EMOTION CHART ── */
+  .emotion-chart-wrap {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-top: 24px;
+  }
+  .emotion-chart-title {
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .emotion-line-wrap {
+    position: relative;
+    height: 80px;
+    margin-bottom: 8px;
+  }
+  .emotion-svg { width: 100%; height: 80px; }
+
+  /* misc */
+  .badge-ux { background: var(--red); color: white; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:4px; }
+  .badge-ret { background: var(--orange); color: white; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:4px; }
+
+  section { scroll-margin-top: 130px; }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo-badge">
+      <div class="logo-icon">🥗</div>
+      <span>Zdravé Stravování</span>
+    </div>
+    <div style="font-size:.75rem;color:rgba(255,255,255,.6);font-weight:400;">Customer Experience Map</div>
+    <div class="header-meta">
+      <span class="meta-chip yellow">AS-IS Analýza</span>
+      <span class="meta-chip">Service Blueprint</span>
+      <span class="meta-chip">UX Audit</span>
+      <span class="meta-chip">Verze 1.0 · 2025</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ NAV TABS ═══ -->
+<nav class="nav-tabs">
+  <div class="nav-tabs-inner">
+    <a href="#journey" class="nav-tab active">🗺️ Customer Journey</a>
+    <a href="#emailflow" class="nav-tab">📧 Email Flow</a>
+    <a href="#blueprint" class="nav-tab">📐 Service Blueprint</a>
+    <a href="#audit" class="nav-tab">🔍 UX Audit</a>
+    <a href="#recommendations" class="nav-tab">💡 Doporučení</a>
+    <a href="#retention" class="nav-tab">🔄 Retenční strategie</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     1. AS-IS CUSTOMER JOURNEY
+══════════════════════════════════════════════ -->
+<section id="journey" style="background:var(--bg);">
+<div class="section">
+  <div class="section-header">
+    <div class="section-label">01 · AS-IS Customer Journey</div>
+    <h2 class="section-title">Zákaznická cesta – současný stav</h2>
+    <p class="section-desc">Horizontální mapa všech kontaktních bodů zákazníka od prvního návštěvy webu po prodloužení programu. Červeně označené kroky jsou UX problémy.</p>
+  </div>
+
+  <!-- Timeline -->
+  <div class="journey-wrap">
+    <div class="journey-track">
+      <div class="journey-connector"></div>
+
+      <!-- KROK 1 -->
+      <div class="journey-step">
+        <div class="step-node" title="Krok 1">
+          🌐
+          <div class="step-num">1</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-label">Awareness</div>
+          <div class="step-card-title">Návštěva webu</div>
+          <div class="step-card-desc">Zákazník navštíví minimálně 3 stránky webu. Trigger: Visit page count ≥ 3.</div>
+          <span class="step-tag tag-channel">🌐 Web</span>
+          <span class="step-tag tag-team">🟢 Marketing</span>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--text-muted);">😊 Zvědavost, zájem</div>
+        </div>
+      </div>
+
+      <!-- KROK 2 -->
+      <div class="journey-step">
+        <div class="step-node" title="Krok 2">
+          📝
+          <div class="step-num">2</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-label">Consideration</div>
+          <div class="step-card-title">Vyplnění formuláře</div>
+          <div class="step-card-desc">Zákazník vyplní objednávkový formulář. Event: form_step_1.</div>
+          <span class="step-tag tag-channel">🌐 Web</span>
+          <span class="step-tag tag-team">🟢 IT / Web</span>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--text-muted);">😐 Neutrální, soustředěný</div>
+        </div>
+      </div>
+
+      <!-- KROK 3 – UX PROBLÉM -->
+      <div class="journey-step">
+        <div class="step-node problem" title="UX Problém!">
+          🚨
+          <div class="step-num red">3</div>
+        </div>
+        <div class="step-card problem-card">
+          <div class="step-card-label" style="color:var(--red);">🚨 UX PROBLÉM</div>
+          <div class="step-card-title">Odeslání poptávky</div>
+          <div class="step-card-desc">Systém vytvoří účet, ale zákazník o tom neví. Musí projít 4 kroky resetu hesla.</div>
+          <span class="step-tag tag-channel">🌐 Web</span>
+          <span class="step-tag tag-problem">❌ 4 extra kroky</span>
+          <div class="alert-banner red" style="margin-top:8px;">
+            <span>⚠️</span>
+            <span>Neznámý účet → reset hesla → email → nové heslo. Vysoká dropoff míra!</span>
+          </div>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--red);">😤 Frustrace, zmatení</div>
+        </div>
+      </div>
+
+      <!-- KROK 4 -->
+      <div class="journey-step">
+        <div class="step-node" title="Krok 4">
+          📧
+          <div class="step-num">4</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-label">Onboarding</div>
+          <div class="step-card-title">Potvrzovací email</div>
+          <div class="step-card-desc">Zákazník dostane potvrzení + přístup do aplikace (jídelníček, výluky, preference).</div>
+          <span class="step-tag tag-channel">📧 Email</span>
+          <span class="step-tag tag-team">🤖 Automatika</span>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--text-muted);">🙂 Pozitivní očekávání</div>
+        </div>
+      </div>
+
+      <!-- KROK 5 -->
+      <div class="journey-step">
+        <div class="step-node" title="Krok 5">
+          📞
+          <div class="step-num">5</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-label">Confirmation</div>
+          <div class="step-card-title">Call centrum</div>
+          <div class="step-card-desc">Operátor ověří informace, domluví detaily a odpoví na otázky zákazníka.</div>
+          <span class="step-tag tag-channel">📞 Telefon</span>
+          <span class="step-tag tag-team">🧑‍💼 Call centrum</span>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--text-muted);">😊 Důvěra, jistota</div>
+        </div>
+      </div>
+
+      <!-- KROK 6 -->
+      <div class="journey-step">
+        <div class="step-node" title="Krok 6">
+          💳
+          <div class="step-num">6</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-label">Purchase</div>
+          <div class="step-card-title">Poděkování + platba</div>
+          <div class="step-card-desc">Email s poděkováním a výzvou k platbě zálohy (10–20 % online).</div>
+          <span class="step-tag tag-channel">📧 Email</span>
+          <span class="step-tag tag-team">💰 Finance</span>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--text-muted);">😊 Nadšení, odhodlání</div>
+        </div>
+      </div>
+
+      <!-- KROK 7 – RETENCE PROBLÉM -->
+      <div class="journey-step">
+        <div class="step-node warning" title="Retenční riziko">
+          🍽️
+          <div class="step-num orange">7</div>
+        </div>
+        <div class="step-card warning-card">
+          <div class="step-card-label" style="color:var(--orange);">⚠️ RETENČNÍ RIZIKO</div>
+          <div class="step-card-title">Aktivní program</div>
+          <div class="step-card-desc">Klient téměř nedostává emaily. Jídelníček jen v zákaznické zóně. Vidí max. 2 týdny.</div>
+          <span class="step-tag tag-channel">🌐 Zákaznická zóna</span>
+          <span class="step-tag tag-warn">📉 Nízká komunikace</span>
+          <div class="alert-banner orange" style="margin-top:8px;">
+            <span>📉</span>
+            <span>Absence průběžné komunikace snižuje engagement a loajalitu zákazníka.</span>
+          </div>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--orange);">😑 Odtažitost, ztráta zájmu</div>
+        </div>
+      </div>
+
+      <!-- KROK 8 -->
+      <div class="journey-step">
+        <div class="step-node" title="Krok 8">
+          🔚
+          <div class="step-num">8</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-label">Renewal</div>
+          <div class="step-card-title">Konec programu</div>
+          <div class="step-card-desc">Automatický email se shrnutím + výzva k prodloužení. Tlačítko "Prodloužit program" → automatické obnovení.</div>
+          <span class="step-tag tag-channel">📧 Email</span>
+          <span class="step-tag tag-team">🤖 Automatika</span>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--text-muted);">🤔 Rozhodování</div>
+        </div>
+      </div>
+
+      <!-- KROK 9 -->
+      <div class="journey-step">
+        <div class="step-node" title="Krok 9">
+          🔄
+          <div class="step-num">9</div>
+        </div>
+        <div class="step-card">
+          <div class="step-card-label">Upsell / Change</div>
+          <div class="step-card-title">Prodloužení / Změna</div>
+          <div class="step-card-desc">Změna programu pouze přes call centrum. Poté platba a dokončení prodloužení.</div>
+          <span class="step-tag tag-channel">📞 Telefon</span>
+          <span class="step-tag tag-channel">📧 Email</span>
+          <span class="step-tag tag-problem">⏱️ Neefektivní</span>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--text-muted);">😐 Neutrální, funkční</div>
+        </div>
+      </div>
+
+    </div><!-- end journey-track -->
+  </div><!-- end journey-wrap -->
+</div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     2. EMAIL FLOW
+══════════════════════════════════════════════ -->
+<section id="emailflow" style="background:var(--surface);">
+<div class="section">
+  <div class="section-header">
+    <div class="section-label">02 · Email Flow</div>
+    <h2 class="section-title">Automatická emailová komunikace</h2>
+    <p class="section-desc">Přehled emailů zasílaných zákazníkovi v průběhu programu dle nastaveného flow.</p>
+  </div>
+
+  <div class="email-grid">
+
+    <div class="email-card">
+      <div class="email-num">1</div>
+      <div class="email-subject">🧾 Faktura</div>
+      <div class="email-desc">Zákazník obdrží fakturu za objednaný program nebo zálohu. Klíčový dokument pro finanční uzavření objednávky.</div>
+      <div class="email-timing">📅 Po platbě zálohy</div>
+    </div>
+
+    <div class="email-card">
+      <div class="email-num">2</div>
+      <div class="email-subject">🚚 Dnes přijede kurýr + FAQ</div>
+      <div class="email-desc">Notifikace o doručení zásilky s praktickými informacemi: čas doručení, instrukce pro převzetí, FAQ k prvnímu dni programu.</div>
+      <div class="email-timing">📅 Den 1 – ráno doručení</div>
+    </div>
+
+    <div class="email-card">
+      <div class="email-num">3</div>
+      <div class="email-subject">🔄 Výzva k prodloužení programu</div>
+      <div class="email-desc">Připomínka blížícího se konce programu s CTA tlačítkem pro snadné prodloužení nebo úpravu plánu.</div>
+      <div class="email-timing">📅 Před koncem programu</div>
+    </div>
+
+    <div class="email-card">
+      <div class="email-num">4</div>
+      <div class="email-subject">🔐 Možnosti portálu</div>
+      <div class="email-desc">Průvodce zákaznickou zónou: jak zobrazit jídelníček, nastavit výluky, sledovat program a kontaktovat podporu.</div>
+      <div class="email-timing">📅 Po přihlášení (onboarding)</div>
+    </div>
+
+    <div class="email-card">
+      <div class="email-num">5</div>
+      <div class="email-subject">🥦 Jak jíst – dietní desatero</div>
+      <div class="email-desc">Edukační email s 10 tipy pro maximální využití programu. Zvyšuje compliance a spokojenost zákazníka.</div>
+      <div class="email-timing">📅 3–5 dní po startu</div>
+    </div>
+
+    <div class="email-card">
+      <div class="email-num">6</div>
+      <div class="email-subject">⏳ Program brzy končí</div>
+      <div class="email-desc">Upozornění zákazníka na blížící se ukončení programu s přehledem výsledků a možností prodloužení.</div>
+      <div class="email-timing">📅 7 dní před koncem</div>
+    </div>
+
+    <div class="email-card">
+      <div class="email-num">7</div>
+      <div class="email-subject">⭐ Dotazník spokojenosti</div>
+      <div class="email-desc">NPS dotazník po skončení programu. Sběr zpětné vazby pro zlepšení služby a identifikaci promotérů.</div>
+      <div class="email-timing">📅 Po skončení programu</div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     3. SERVICE BLUEPRINT
+══════════════════════════════════════════════ -->
+<section id="blueprint" style="background:var(--bg);">
+<div class="section">
+  <div class="section-header">
+    <div class="section-label">03 · Service Blueprint</div>
+    <h2 class="section-title">Blueprint zákaznické služby</h2>
+    <p class="section-desc">Propojení zákaznické cesty s frontline operacemi, backoffice procesy, systémy a komunikačními kanály.</p>
+  </div>
+
+  <div class="blueprint-wrap">
+    <table class="blueprint-table">
+      <thead>
+        <tr>
+          <th>Vrstva</th>
+          <th>1 · Web</th>
+          <th>2 · Formulář</th>
+          <th>3 · Registrace</th>
+          <th>4 · Potvrzení</th>
+          <th>5 · Call</th>
+          <th>6 · Platba</th>
+          <th>7 · Program</th>
+          <th>8 · Konec</th>
+          <th>9 · Obnova</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Customer Actions -->
+        <tr class="bp-row-customer">
+          <td>👤 Customer Actions</td>
+          <td>Prohlíží web, čte info o programech</td>
+          <td>Vyplní osobní údaje a preference</td>
+          <td>Odešle poptávku, resetuje heslo</td>
+          <td>Přihlásí se do portálu, nastaví preference</td>
+          <td>Komunikuje s operátorem po telefonu</td>
+          <td>Zaplatí zálohu online</td>
+          <td>Stahuje jídelníček z portálu</td>
+          <td>Čte shrnutí, klikne na prodloužení</td>
+          <td>Volá změnu nebo potvrzuje prodloužení</td>
+        </tr>
+        <!-- Frontstage -->
+        <tr class="bp-row-frontstage">
+          <td>🎭 Frontstage</td>
+          <td>Responzivní web, SEO, obsah</td>
+          <td>Multi-krokový formulář, validace</td>
+          <td>Automatická registrace, potvrzení emailem</td>
+          <td>Emailová šablona s CTA do portálu</td>
+          <td>Operátor call centra, skript hovoru</td>
+          <td>Platební brána, email s fakturou</td>
+          <td>Zákaznická zóna, jídelníček, notifikace</td>
+          <td>Automatický email se shrnutím + CTA</td>
+          <td>Nový hovor nebo email s platbou</td>
+        </tr>
+        <!-- Backstage -->
+        <tr class="bp-row-backstage">
+          <td>🔧 Backstage</td>
+          <td>CMS správa obsahu, A/B testy</td>
+          <td>Ukládání dat do CRM, event tracking</td>
+          <td>
+            Vytvoření účtu v systému<br>
+            <span class="bp-pill bp-pill-red">⚠️ Bez informování uživatele</span>
+          </td>
+          <td>Trigger automatizace, logging</td>
+          <td>CRM update, poznámky operátora</td>
+          <td>Zpracování platby, účetnictví</td>
+          <td>
+            Správa jídelníčku, logistika<br>
+            <span class="bp-pill bp-pill-orange">Viditelnost 2 týdny</span>
+          </td>
+          <td>Automatický trigger po X dnech</td>
+          <td>Aktualizace parametrů operátorem</td>
+        </tr>
+        <!-- Systems -->
+        <tr class="bp-row-systems">
+          <td>💻 Systems</td>
+          <td>CMS, Analytics, GTM</td>
+          <td>CRM, Marketing Automation</td>
+          <td>CRM, Email platform, Auth system</td>
+          <td>Email platform (Mailchimp/Brevo)</td>
+          <td>CRM, telefonie (VoIP)</td>
+          <td>Platební brána, účetní SW</td>
+          <td>Portál zákaznické zóny, ERP</td>
+          <td>Email automation, CRM</td>
+          <td>CRM, platební brána, email</td>
+        </tr>
+        <!-- Communication Channels -->
+        <tr class="bp-row-channels">
+          <td>📡 Kanály</td>
+          <td><span class="bp-pill bp-pill-blue">🌐 Web</span></td>
+          <td><span class="bp-pill bp-pill-blue">🌐 Web</span></td>
+          <td><span class="bp-pill bp-pill-blue">🌐 Web</span> <span class="bp-pill bp-pill-green">📧 Email</span></td>
+          <td><span class="bp-pill bp-pill-green">📧 Email</span></td>
+          <td><span class="bp-pill bp-pill-yellow">📞 Telefon</span></td>
+          <td><span class="bp-pill bp-pill-green">📧 Email</span> <span class="bp-pill bp-pill-blue">💳 Platební brána</span></td>
+          <td><span class="bp-pill bp-pill-blue">🌐 Portál</span></td>
+          <td><span class="bp-pill bp-pill-green">📧 Email</span></td>
+          <td><span class="bp-pill bp-pill-yellow">📞 Telefon</span> <span class="bp-pill bp-pill-green">📧 Email</span></td>
+        </tr>
+        <!-- Pain Points -->
+        <tr class="bp-row-pain">
+          <td>🔴 Pain Points</td>
+          <td>Nízká konverze z návštěvy</td>
+          <td>Vysoký dropout u formuláře</td>
+          <td><strong>Neznámý účet, povinný reset hesla, 4 extra kroky</strong></td>
+          <td>Přístup do portálu není intuitivní</td>
+          <td>Čekání na volný operátor, opakování info</td>
+          <td>Záloha může odradit zákazníka</td>
+          <td>Žádná průběžná komunikace, nízká angažovanost</td>
+          <td>CTA může být přehlédnuto</td>
+          <td>Nutnost telefonovat pro změnu = friction</td>
+        </tr>
+        <!-- Opportunities -->
+        <tr class="bp-row-opportunity">
+          <td>💚 Příležitosti</td>
+          <td>Personalizace obsahu, retargeting</td>
+          <td>Zjednodušení formuláře, live chat</td>
+          <td><strong>Nastavení hesla přímo ve formuláři</strong></td>
+          <td>Welcome flow, video tutoriál</td>
+          <td>Chatbot pro základní otázky</td>
+          <td>Flexibilní platby, splátky</td>
+          <td>Týdenní email newsletter, push notifikace</td>
+          <td>Personalizované shrnutí výsledků</td>
+          <td>Samoobslužná změna v portálu</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     4. UX AUDIT
+══════════════════════════════════════════════ -->
+<section id="audit" style="background:var(--surface);">
+<div class="section">
+  <div class="section-header">
+    <div class="section-label">04 · UX Audit</div>
+    <h2 class="section-title">Identifikované třecí body</h2>
+    <p class="section-desc">Analytický přehled UX problémů s hodnocením závažnosti a dopadem na konverze.</p>
+  </div>
+
+  <div class="audit-grid">
+
+    <div class="audit-card friction">
+      <div class="audit-icon">🔐</div>
+      <div class="audit-title">První přihlášení – reset hesla</div>
+      <div class="audit-severity sev-high">🔴 KRITICKÁ ZÁVAŽNOST</div>
+      <div class="audit-desc">Zákazník neví, že mu byl vytvořen účet. Musí projít 4 kroky: zadat email → kliknout reset → otevřít email → nastavit heslo. Každý extra krok zvyšuje dropoff rate. Toto je největší UX problém celého onboardingu.</div>
+    </div>
+
+    <div class="audit-card friction">
+      <div class="audit-icon">📭</div>
+      <div class="audit-title">Absence průběžné komunikace</div>
+      <div class="audit-severity sev-high">🔴 VYSOKÁ ZÁVAŽNOST</div>
+      <div class="audit-desc">Během aktivního programu zákazník téměř nedostává emaily. Jídelníček je pouze v zákaznické zóně. Dříve chodil email – jeho absence snižuje pocit péče a zvyšuje churn rate. Zákazník vidí jídelníček jen 2 týdny dopředu.</div>
+    </div>
+
+    <div class="audit-card friction">
+      <div class="audit-icon">📞</div>
+      <div class="audit-title">Závislost na call centru</div>
+      <div class="audit-severity sev-med">🟠 STŘEDNÍ ZÁVAŽNOST</div>
+      <div class="audit-desc">Jakákoliv změna programu nebo parametrů vyžaduje telefonní hovor. Zákazníci generace Z a mileniálové preferují samoobslužné digitální kanály. Zatěžuje operátory zbytečnými rutinními úkony místo péče o složitější případy.</div>
+    </div>
+
+    <div class="audit-card friction">
+      <div class="audit-icon">📉</div>
+      <div class="audit-title">Nízká retence zákazníků</div>
+      <div class="audit-severity sev-high">🔴 VYSOKÁ ZÁVAŽNOST</div>
+      <div class="audit-desc">Kombinace nízké komunikace během programu a absence win-back automatizace vede k vysokému churn. Zákazník nemá dostatečnou motivaci pokračovat. Scházejí připomínky výsledků a edukační obsah.</div>
+    </div>
+
+    <div class="audit-card friction">
+      <div class="audit-icon">👁️</div>
+      <div class="audit-title">Omezená viditelnost jídelníčku</div>
+      <div class="audit-severity sev-med">🟠 STŘEDNÍ ZÁVAŽNOST</div>
+      <div class="audit-desc">Zákazník vidí jídelníček pouze 2 týdny dopředu. To omezuje plánování a schopnost zákazníka se na program adaptovat. Zvyšuje to potenciálně počet hovorů na call centrum s dotazy.</div>
+    </div>
+
+    <div class="audit-card friction">
+      <div class="audit-icon">🔄</div>
+      <div class="audit-title">Komplikovaný proces prodloužení</div>
+      <div class="audit-severity sev-med">🟠 STŘEDNÍ ZÁVAŽNOST</div>
+      <div class="audit-desc">Prodloužení s úpravami vyžaduje telefonní hovor. Zákazník musí aktivně vyhledávat kontakt, čekat na operátora a znovu vysvětlovat potřeby. Automatické prodloužení bez možnosti online úpravy nestačí.</div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     5. UX DOPORUČENÍ – VARIANTA A vs B
+══════════════════════════════════════════════ -->
+<section id="recommendations" style="background:var(--bg);">
+<div class="section">
+  <div class="section-header">
+    <div class="section-label">05 · UX Doporučení</div>
+    <h2 class="section-title">Varianta A vs. Varianta B</h2>
+    <p class="section-desc">Porovnání současného stavu (automatická registrace) s navrhovaným řešením (heslo ve formuláři).</p>
+  </div>
+
+  <div class="comparison-grid">
+
+    <!-- VARIANTA A -->
+    <div class="variant-card">
+      <div class="variant-header a">
+        ❌ Varianta A – Současný stav
+        <span style="margin-left:auto;font-size:.72rem;background:rgba(220,53,69,.15);padding:2px 8px;border-radius:8px;">Nedoporučeno</span>
+      </div>
+      <div class="variant-body">
+        <p style="font-size:.78rem;color:var(--text-secondary);margin:0 0 12px;">Systém automaticky vytvoří účet po odeslání formuláře. Zákazník o tom není informován a musí sám projít procesem resetu hesla.</p>
+        <div class="variant-row">
+          <span class="variant-metric">UX kvalita</span>
+          <span class="variant-value val-bad">❌ Špatná</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Počet kroků k přihlášení</span>
+          <span class="variant-value val-bad">6 kroků</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Konverzní dopad</span>
+          <span class="variant-value val-bad">📉 Negativní</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Zátěž call centra</span>
+          <span class="variant-value val-bad">🔺 Vysoká</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Zákaznická frustrace</span>
+          <span class="variant-value val-bad">😤 Velmi vysoká</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Implementační náročnost</span>
+          <span class="variant-value val-good">✅ Již existuje</span>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:#fdf0f2;border-radius:8px;font-size:.75rem;color:#8b1a26;line-height:1.4;">
+          <strong>Hlavní problém:</strong> Zákazník neví o svém účtu, je frustrován, musí resetovat heslo, část z nich odchází bez přihlášení. Onboarding selhává hned na začátku.
+        </div>
+      </div>
+    </div>
+
+    <!-- VARIANTA B -->
+    <div class="variant-card recommended">
+      <div class="variant-header b">
+        ✅ Varianta B – Heslo ve formuláři
+        <span style="margin-left:auto;font-size:.72rem;background:var(--green-light);color:var(--green-dark);padding:2px 8px;border-radius:8px;">✨ Doporučeno</span>
+      </div>
+      <div class="variant-body">
+        <p style="font-size:.78rem;color:var(--text-secondary);margin:0 0 12px;">Zákazník si nastaví heslo přímo v objednávkovém formuláři. Ihned po odeslání má přístup do svého účtu a zákaznické zóny.</p>
+        <div class="variant-row">
+          <span class="variant-metric">UX kvalita</span>
+          <span class="variant-value val-good">✅ Výborná</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Počet kroků k přihlášení</span>
+          <span class="variant-value val-good">2 kroky</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Konverzní dopad</span>
+          <span class="variant-value val-good">📈 Pozitivní</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Zátěž call centra</span>
+          <span class="variant-value val-good">🔻 Nízká</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Zákaznická frustrace</span>
+          <span class="variant-value val-good">😊 Minimální</span>
+        </div>
+        <div class="variant-row">
+          <span class="variant-metric">Implementační náročnost</span>
+          <span class="variant-value val-med">⚙️ Střední (1–3 dny)</span>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:var(--green-light);border-radius:8px;font-size:.75rem;color:var(--green-dark);line-height:1.4;">
+          <strong>Hlavní výhoda:</strong> Zákazník si nastaví heslo sám, onboarding je plynulý, přihlášení hned po odeslání. Méně dotazů na call centrum, vyšší konverze.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recommendation banner -->
+  <div style="background:var(--surface);border:2px solid var(--green-primary);border-radius:14px;padding:20px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <div style="font-size:32px;">🏆</div>
+    <div>
+      <div style="font-size:.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--green-primary);margin-bottom:4px;">Naše doporučení</div>
+      <div style="font-size:.95rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;">Implementujte Variantu B – heslo ve formuláři</div>
+      <div style="font-size:.8rem;color:var(--text-secondary);">Jde o standardní best practice (používá Rohlík, Bolt Food, Nespresso). Odhadovaný dopad: +15–25 % onboarding completion rate, −30 % volání na call centrum kvůli přihlášení.</div>
+    </div>
+    <div class="recommend-badge" style="margin-left:auto;">✅ Doporučujeme Variantu B</div>
+  </div>
+
+  <!-- Additional recommendations -->
+  <div style="margin-top:28px;">
+    <div style="font-size:.85rem;font-weight:700;color:var(--text-primary);margin-bottom:16px;">📋 Další UX doporučení</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;">
+
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:16px;">
+        <div style="font-size:18px;margin-bottom:6px;">🗓️</div>
+        <div style="font-size:.85rem;font-weight:700;margin-bottom:4px;">Rozšíření viditelnosti jídelníčku</div>
+        <div style="font-size:.75rem;color:var(--text-secondary);">Zobrazovat jídelníček 4–6 týdnů dopředu, nikoliv jen 2. Zákazník se lépe připravuje, klesají dotazy na call centrum.</div>
+      </div>
+
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:16px;">
+        <div style="font-size:18px;margin-bottom:6px;">🖥️</div>
+        <div style="font-size:.85rem;font-weight:700;margin-bottom:4px;">Samoobslužné změny programu</div>
+        <div style="font-size:.75rem;color:var(--text-secondary);">Umožnit zákazníkovi změnu parametrů programu přímo v portálu bez nutnosti telefonovat. Odlehčí call centrum o 20–40 %.</div>
+      </div>
+
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:16px;">
+        <div style="font-size:18px;margin-bottom:6px;">💬</div>
+        <div style="font-size:.85rem;font-weight:700;margin-bottom:4px;">Chat / chatbot podpora</div>
+        <div style="font-size:.75rem;color:var(--text-secondary);">Implementovat live chat nebo AI chatbot pro základní otázky. Sníží objem hovorů a zlepší dostupnost podpory mimo pracovní dobu.</div>
+      </div>
+
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:16px;">
+        <div style="font-size:18px;margin-bottom:6px;">📱</div>
+        <div style="font-size:.85rem;font-weight:700;margin-bottom:4px;">Push notifikace / mobilní app</div>
+        <div style="font-size:.75rem;color:var(--text-secondary);">Jídelníček jako push notifikace v mobilní aplikaci nebo progressive web app. Výrazně zvýší denní engagement zákazníka.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ═══════════════════════════════════════════════
+     6. RETENČNÍ STRATEGIE
+══════════════════════════════════════════════ -->
+<section id="retention" style="background:var(--surface);">
+<div class="section">
+  <div class="section-header">
+    <div class="section-label">06 · Retenční strategie</div>
+    <h2 class="section-title">Nové automatizace pro zvýšení retence</h2>
+    <p class="section-desc">Navrhované emailové a komunikační automatizace pro udržení zákazníků a snížení churnu.</p>
+  </div>
+
+  <div class="retention-phases">
+
+    <!-- DURING PROGRAM -->
+    <div class="phase-card">
+      <div class="phase-header during">
+        🟢 Během programu
+        <span style="margin-left:auto;font-size:.7rem;font-weight:600;opacity:.7;">Engagement</span>
+      </div>
+      <div class="phase-body">
+
+        <div class="phase-item">
+          <div class="phase-dot dot-green"></div>
+          <div>
+            <div class="phase-item-title">📅 Týdenní email s jídelníčkem</div>
+            <div class="phase-item-desc">Přehled menu na příští týden + tipy na přípravu. Odesílán každou neděli večer. Zákazník se těší a plánuje.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-green"></div>
+          <div>
+            <div class="phase-item-title">💡 Týdenní tipy a edukace</div>
+            <div class="phase-item-desc">Nutriční rady, tipy na pohyb, recepty na víkend. Zvyšuje hodnotu programu a loajalitu zákazníka.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-green"></div>
+          <div>
+            <div class="phase-item-title">📊 Průběžné výsledky</div>
+            <div class="phase-item-desc">Po 2 týdnech: „Jak vám jde program?" s výzvou k selfie nebo váhovému záznamu. Gamifikace pokroku.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-green"></div>
+          <div>
+            <div class="phase-item-title">🎓 Edukační série</div>
+            <div class="phase-item-desc">3–4 emailová série o výživě, makronutrientech a zdravém životním stylu. Zákazník vnímá přidanou hodnotu.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BEFORE END -->
+    <div class="phase-card">
+      <div class="phase-header before">
+        🟡 Před koncem programu
+        <span style="margin-left:auto;font-size:.7rem;font-weight:600;opacity:.7;">Konverze</span>
+      </div>
+      <div class="phase-body">
+
+        <div class="phase-item">
+          <div class="phase-dot dot-yellow"></div>
+          <div>
+            <div class="phase-item-title">⏰ Reminder – 14 dní</div>
+            <div class="phase-item-desc">„Váš program końí za 2 týdny." Přehled dosavadních výsledků, motivace k pokračování. Soft CTA.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-yellow"></div>
+          <div>
+            <div class="phase-item-title">⏰ Reminder – 7 dní</div>
+            <div class="phase-item-desc">„Zbývá 7 dní." Zvýrazněné výsledky, testimonial jiného zákazníka. Strong CTA s early-bird slevou.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-yellow"></div>
+          <div>
+            <div class="phase-item-title">⏰ Urgentní reminder – 3 dny</div>
+            <div class="phase-item-desc">„Poslední šance!" Urgentní tón, jasné CTA, personalizované shrnutí změn. Jednoduché prodloužení na 1 klik.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-yellow"></div>
+          <div>
+            <div class="phase-item-title">📋 Shrnutí a výsledky</div>
+            <div class="phase-item-desc">Personalizovaný report: počet jídel, kalorie, doporučení pro další program. Emocionálně silný email.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- AFTER END – WIN BACK -->
+    <div class="phase-card">
+      <div class="phase-header after">
+        🔵 Po skončení – Win-back
+        <span style="margin-left:auto;font-size:.7rem;font-weight:600;opacity:.7;">Re-engagement</span>
+      </div>
+      <div class="phase-body">
+
+        <div class="phase-item">
+          <div class="phase-dot dot-blue"></div>
+          <div>
+            <div class="phase-item-title">🔄 Win-back – 30 dní</div>
+            <div class="phase-item-desc">„Chybíte nám!" Personalizovaná nabídka se slevou 10 % na nový program. Zdůraznění výsledků z minulého běhu.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-blue"></div>
+          <div>
+            <div class="phase-item-title">🔄 Win-back – 60 dní</div>
+            <div class="phase-item-desc">Sezónní nabídka nebo nový program v portfolio. „Zkuste náš nový jarní program." Jiný úhel pohledu.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-blue"></div>
+          <div>
+            <div class="phase-item-title">🔄 Win-back – 90 dní</div>
+            <div class="phase-item-desc">Poslední pokus. Maximální sleva nebo bonus (bezplatný nutriční konzultace). Pokud neodpoví → přesunout do pasivní databáze.</div>
+          </div>
+        </div>
+
+        <div class="phase-item">
+          <div class="phase-dot dot-blue"></div>
+          <div>
+            <div class="phase-item-title">⭐ NPS + referral</div>
+            <div class="phase-item-desc">Dotazník spokojenosti + referral program: „Doporučte nás příteli a získejte slevu." Promotéři jsou nejlepší kanál.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Summary KPIs -->
+  <div style="margin-top:28px;background:var(--green-dark);border-radius:14px;padding:24px 28px;color:white;">
+    <div style="font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.7;margin-bottom:12px;">Očekávané dopady navrhovaných změn</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;">
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:var(--yellow);">+25%</div>
+        <div style="font-size:.75rem;opacity:.8;margin-top:2px;">Onboarding completion</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:var(--yellow);">−30%</div>
+        <div style="font-size:.75rem;opacity:.8;margin-top:2px;">Volání na call centrum</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:var(--yellow);">+20%</div>
+        <div style="font-size:.75rem;opacity:.8;margin-top:2px;">Míra prodloužení programu</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:var(--yellow);">+15%</div>
+        <div style="font-size:.75rem;opacity:.8;margin-top:2px;">Win-back konverze</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:1.8rem;font-weight:700;color:var(--yellow);">+40%</div>
+        <div style="font-size:.75rem;opacity:.8;margin-top:2px;">Email engagement rate</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer style="background:var(--text-primary);color:rgba(255,255,255,.6);padding:24px 32px;font-size:.75rem;text-align:center;">
+  <div style="max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <span>🥗 Zdravé Stravování · Customer Experience Analysis</span>
+    <span>AS-IS Journey Map · Service Blueprint · UX Audit · Retenční strategie</span>
+    <span>Verze 1.0 · 2025</span>
+  </div>
+</footer>
+
+<script>
+  // Smooth scroll for nav tabs
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      }
+    });
+  });
+
+  // Active tab on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        const activeTab = document.querySelector(`.nav-tab[href="#${id}"]`);
+        if (activeTab) activeTab.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
+
