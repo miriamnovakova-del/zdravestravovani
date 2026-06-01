@@ -595,6 +595,30 @@
   .badge-ux { background: var(--red); color: white; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:4px; }
   .badge-ret { background: var(--orange); color: white; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:4px; }
 
+  /* ── PAGE TAB BUTTONS ── */
+  .page-tab {
+    padding: 10px 18px;
+    font-size: .84rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: -.2px;
+  }
+  .page-tab:hover { color: var(--green-primary); }
+  .page-tab.active {
+    color: var(--green-dark);
+    border-bottom-color: var(--yellow-dark);
+    background: var(--yellow-light);
+    border-radius: 6px 6px 0 0;
+  }
+  .page-subnav { display: flex; align-items: center; }
+
   section { scroll-margin-top: 130px; }
 </style>
 </head>
@@ -602,32 +626,28 @@
 
 <!-- ═══ HEADER ═══ -->
 <header class="site-header">
-  <div class="header-inner">
-    <div class="logo-badge">
-      <div class="logo-icon">🥗</div>
-      <span>Zdravé Stravování</span>
-    </div>
-    <div style="font-size:.75rem;color:rgba(255,255,255,.6);font-weight:400;">Customer Experience Map</div>
-    <div class="header-meta">
-      <span class="meta-chip yellow">AS-IS Analýza</span>
-      <span class="meta-chip">Service Blueprint</span>
-      <span class="meta-chip">UX Audit</span>
-      <span class="meta-chip">Verze 1.0 · 2025</span>
-    </div>
+  <div class="header-inner" style="justify-content:center;flex-direction:column;gap:4px;text-align:center;padding:18px 32px;">
+    <div style="font-size:1.25rem;font-weight:700;font-family:'DM Serif Display',serif;letter-spacing:-.3px;">Zdravé Stravování</div>
+    <div style="font-size:.78rem;color:rgba(255,255,255,.65);font-weight:400;">Customer Journey Process – Experience Map by Maira</div>
   </div>
 </header>
 
-<!-- ═══ NAV TABS ═══ -->
+<!-- ═══ PAGE TABS ═══ -->
 <nav class="nav-tabs">
   <div class="nav-tabs-inner">
-    <a href="#journey" class="nav-tab active">🗺️ Customer Journey</a>
-    <a href="#emailflow" class="nav-tab">📧 Email Flow</a>
-    <a href="#blueprint" class="nav-tab">📐 Service Blueprint</a>
-    <a href="#audit" class="nav-tab">🔍 UX Audit</a>
-    <a href="#recommendations" class="nav-tab">💡 Doporučení</a>
-    <a href="#retention" class="nav-tab">🔄 Retenční strategie</a>
+    <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
+      <button class="page-tab active" data-page="page1">Zákaznická cesta</button>
+      <button class="page-tab" data-page="page3">Blueprint Service</button>
+      <button class="page-tab" data-page="page2">UX Audit & Doporučení</button>
+    </div>
+    <div id="nav-page1" class="page-subnav"></div>
+    <div id="nav-page3" class="page-subnav" style="display:none;"></div>
+    <div id="nav-page2" class="page-subnav" style="display:none;"></div>
   </div>
 </nav>
+
+<!-- ═══ PAGE 1 ═══ -->
+<div id="page1">
 
 <!-- ═══════════════════════════════════════════════
      1. AS-IS CUSTOMER JOURNEY
@@ -871,7 +891,10 @@
 </div>
 </section>
 
-<hr class="section-divider">
+</div><!-- end page1 -->
+
+<!-- ═══ PAGE 3 ═══ -->
+<div id="page3" style="display:none;">
 
 <!-- ═══════════════════════════════════════════════
      3. SERVICE BLUEPRINT
@@ -1004,7 +1027,10 @@
 </div>
 </section>
 
-<hr class="section-divider">
+</div><!-- end page3 -->
+
+<!-- ═══ PAGE 2 ═══ -->
+<div id="page2" style="display:none;">
 
 <!-- ═══════════════════════════════════════════════
      4. UX AUDIT
@@ -1379,6 +1405,8 @@
 </div>
 </section>
 
+</div><!-- end page2 -->
+
 <!-- ═══ FOOTER ═══ -->
 <footer style="background:var(--text-primary);color:rgba(255,255,255,.6);padding:24px 32px;font-size:.75rem;text-align:center;">
   <div style="max-width:1600px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
@@ -1389,7 +1417,28 @@
 </footer>
 
 <script>
-  // Smooth scroll for nav tabs
+  // ── PAGE SWITCHING ──
+  const pageTabs = document.querySelectorAll('.page-tab');
+  const pages = { page1: document.getElementById('page1'), page2: document.getElementById('page2'), page3: document.getElementById('page3') };
+  const subnavs = { page1: document.getElementById('nav-page1'), page2: document.getElementById('nav-page2'), page3: document.getElementById('nav-page3') };
+
+  pageTabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.page;
+      pageTabs.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      Object.keys(pages).forEach(key => {
+        pages[key].style.display = key === target ? '' : 'none';
+        subnavs[key].style.display = key === target ? 'flex' : 'none';
+      });
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      const firstTab = subnavs[target].querySelector('.nav-tab');
+      if (firstTab) firstTab.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // ── SMOOTH SCROLL for sub-nav ──
   document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.addEventListener('click', function(e) {
       e.preventDefault();
@@ -1402,8 +1451,8 @@
     });
   });
 
-  // Active tab on scroll
-  const sections = document.querySelectorAll('section[id]');
+  // ── ACTIVE SUB-TAB on scroll ──
+  const allSections = document.querySelectorAll('section[id]');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -1413,10 +1462,9 @@
         if (activeTab) activeTab.classList.add('active');
       }
     });
-  }, { threshold: 0.3 });
-  sections.forEach(s => observer.observe(s));
+  }, { threshold: 0.25 });
+  allSections.forEach(s => observer.observe(s));
 </script>
 
 </body>
 </html>
-
