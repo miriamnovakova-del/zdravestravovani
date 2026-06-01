@@ -109,6 +109,7 @@
     display: flex;
     gap: 0;
     overflow-x: auto;
+    justify-content: center;
   }
   .nav-tab {
     padding: 14px 20px;
@@ -591,6 +592,50 @@
   }
   .emotion-svg { width: 100%; height: 80px; }
 
+  /* ── PAGE TAB DROPDOWN ── */
+  .page-tab-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+  .page-tab-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.1);
+    min-width: 160px;
+    z-index: 200;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    margin-top: 2px;
+  }
+  .page-tab-wrap:hover .page-tab-dropdown {
+    display: flex;
+  }
+  .dropdown-item {
+    padding: 11px 18px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background .15s, color .15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+  }
+  .dropdown-item:hover {
+    background: var(--green-light);
+    color: var(--green-dark);
+    border-left-color: var(--green-primary);
+  }
+
   /* misc */
   .badge-ux { background: var(--red); color: white; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:4px; }
   .badge-ret { background: var(--orange); color: white; font-size:.62rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-left:4px; }
@@ -636,7 +681,15 @@
 <nav class="nav-tabs">
   <div class="nav-tabs-inner">
     <div style="display:flex;align-items:center;gap:0;flex-shrink:0;">
-      <button class="page-tab active" data-page="page1">Zákaznická cesta</button>
+      <div class="page-tab-wrap">
+        <button class="page-tab active" data-page="page1">Zákaznická cesta ▾</button>
+        <div class="page-tab-dropdown">
+          <a href="#emailflow" class="dropdown-item" id="dropdown-emailing">
+            <span style="font-size:15px;">📧</span>
+            <span>Emailing</span>
+          </a>
+        </div>
+      </div>
       <button class="page-tab" data-page="page3">Blueprint Service</button>
       <button class="page-tab" data-page="page2">UX Audit & Doporučení</button>
     </div>
@@ -1438,7 +1491,19 @@
     });
   });
 
-  // ── SMOOTH SCROLL for sub-nav ──
+  // ── DROPDOWN EMAILING LINK ──
+  document.getElementById('dropdown-emailing').addEventListener('click', function(e) {
+    e.preventDefault();
+    // Make sure page1 is visible
+    const page1btn = document.querySelector('.page-tab[data-page="page1"]');
+    if (pages['page1'].style.display === 'none') {
+      page1btn.click();
+    }
+    setTimeout(() => {
+      const target = document.getElementById('emailflow');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+  });
   document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.addEventListener('click', function(e) {
       e.preventDefault();
